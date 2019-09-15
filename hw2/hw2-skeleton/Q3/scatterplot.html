@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>lfan45</title>
+		<script src="../lib/d3.v5.min.js"></script>
+		<style type="text/css">
+		.pagebreak { page-break-before: always; } 
+ 
+    	.axis path,
+    	.axis line {
+        	fill: none;
+        	stroke: #000;
+        	shape-rendering: crispEdges;
+    	}
+ 		.grid line {
+  			stroke: lightgrey;
+  			stroke-opacity: 0.7;
+  			shape-rendering: crispEdges;
+		}
+
+		.grid path {
+  			stroke-width: 0;
+		}
+
+    	.point {
+        	fill: none;
+    	}
+		.legend{
+    
+    		padding: 5px;
+    		font: 10px sans-serif;
+		}
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+		draw("graph1",1)
+		draw("graph2",2)
+		draw("graph3",3)
+		draw("graph4",1,"sqrt")
+		draw("graph5",1,"log")
+		function draw(selector, n, scale_indicator="linear"){
+			//Width and height
+			var margin = {top: 80, right: 150, bottom: 50, left: 80},
+			    width = 1030 - margin.left - margin.right,
+			    height = 750 - margin.top - margin.bottom;
+
+			//Create scale function
+			var x = d3.scaleLinear()
+					  .range([0, width])
+
+			var w = d3.scaleLinear()
+					  .range([10, 100])
+
+			//Create div element
+			var div = d3.select("body").
+						select('div')
+						.data([1])
+						.enter()
+						.append('div')
+						.attr("id",selector)
+			
+			//add css page-break 
+            d3.select("body").
+					select('div')
+					.data([1])
+					.enter()
+					.append('div')
+					.attr("class","pagebreak")
+
+			//Create SVG element
+			var svg = div.append("svg")
+						.attr("width", width + margin.left + margin.right)
+						.attr("height", height + margin.top + margin.bottom)
+						.append("g")
+						.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+			//Load data
+			d3.csv("movies.csv").then(function(data){
+				//Coerce strings to numbers
+				data.forEach(function(d){
+					if (n==1){
+						d.x = +d.Rating
+						d.y = +d.WinsNoms
+						d.v = +d.IsGoodRating
+					}	
+					if (n==2){
+						d.x = +d.Rating
+						d.y = +d.Budget
+						d.v = +d.IsGoodRating
+					}
+					if (n==3){
+						d.x = +d.Rating
+						d.y = +d.Votes
+						d.v = +d.IsGoodRating
+						d.w = +d.IsGoodRating
+					}			
+				});
+				
+				// Compute the scales’ domains.
+    			x.domain(d3.extent(data, function(d) { return d.x; })).nice();
+    			w.domain(d3.extent(data, function(d) { return d.w; })).nice();
+    			// specify which scale used for y 
+    			function y_scale(indicator){
+				if(indicator == 'linear'){
+					return d3.scaleLinear()
+							.range([height, 0])
+							.domain(d3.extent(data, function(d) { return d.y; })).nice()
+				}
+				if(indicator == 'sqrt'){
+					return d3.scaleSqrt()
+							.range([height, 0])
+							.domain(d3.extent(data, function(d) { return d.y; })).nice()
+				}
+				if(indicator == 'log'){
+					return d3.scaleLog()
+							.range([height, 0])
+							.domain([0.1, d3.max(data, function(d) { return d.y; })]).nice()
+				}
+			}
+				var y = y_scale(scale_indicator)
+				
+				// handle values out of the domain of y 
+				y.clamp(true)
+				//Add the x-axis
+	    		svg.append("g")
+        		   .attr("class", "x axis")
+        		   .attr("transform", "translate(0," + height + ")")
+        		   .call(d3.axisBottom(x));	
+
+				//Add the y-axis
+				var y_Axis = svg.append("g")
+        		   		.attr("class", "y axis")  		
+        		if(scale_indicator == 'log'){y_Axis.call(d3.axisLeft(y).tickFormat(d3.format(".1f")))}
+        		else {y_Axis.call(d3.axisLeft(y).tickFormat(d3.format("")))}
+        		// add the X gridlines
+  				svg.append("g")			
+      				.attr("class", "grid")
+      				.attr("transform", "translate(0," + height + ")")
+      				.call(d3.axisBottom(x)
+          			.tickSize(-height)
+          			.tickFormat("")
+      				);
+
+  				// add the Y gridlines
+ 				svg.append("g")			
+      				.attr("class", "grid")
+      				.call(d3.axisLeft(y)
+          			.tickSize(-width)
+          			.tickFormat("")
+      				);
+
+				//Add the points 
+				svg.selectAll(".point")
+					.data(data)
+				    .enter().append("path")
+				 	.attr("class","point")
+				 	.attr("d", d3.symbol().size(function(d){if(n==3){return w(d.w)} else{return 30}})
+				 				.type(function(d) {if(d.v==1){return d3.symbolCross;} else{return d3.symbolCircle;}}))
+				 	.style("stroke",function(d) {if(d.v==1){return "blue";} else{return "red";}})
+				 	.attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
+
+				 //Add x-axis label
+  				svg.append("text")
+        			.attr("transform", "translate("+(width+2)+","+(height*0.98)+")")
+        			.style("text-anchor","start")
+        			.style("font-size","15px")
+        			.text("Rating");
+
+        		//Add y-axis label
+  				svg.append("text")
+        			.attr("transform","rotate(-90)")
+        			.attr("y",0)
+        			.attr("x",-2)
+        			.attr("dy","1.5em")
+      		  		.style("text-anchor","end")
+       			 	.style("font-size","15px")
+       			 	.text(function(d){if(n==1){return "Wins+Noms"}
+			   						  if(n==2){return "Budget"}
+			   						  if(n==3){return "Votes"}
+			   			});
+				//Addt title 
+				svg.append("text")
+					.attr("x", (width/2))
+					.attr("y", 0-margin.top/2)
+					.attr("text-anchor","middle")
+			   		.style("font-size", "25px")
+			   		.style("text-decoration", "bold")
+			   		.text(function(d){
+			   				if(scale_indicator == 'linear'){
+			   					if(n==1){return "Wins+Nominations vs. Rating"}
+			   					if(n==2){return "Budget vs. Rating"}
+			   					if(n==3){return "Votes vs. Rating(symbol size scaled by Wins+Nominations)"}
+			   				}
+			   				if(scale_indicator == 'sqrt'){return "Wins+Nominations(square-root-scaled) vs. Rating"}
+			   				if(scale_indicator == 'log'){return "Wins+Nominations(log-scaled) vs. Rating"}
+			   			});
+
+       			// Add legend
+		     	var qualities = ["good rating","bad rating"];
+  				var q_text = {"good rating":d3.symbolCross,"bad rating":d3.symbolCircle};
+  				var q_color = {"good rating":"blue","bad rating":"red"}
+
+  				var legend = svg.selectAll(".legend")
+        					.data(qualities)
+        					.enter().append("g")
+        					.attr("class","legend")
+        					.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+    
+    			legend.append("path")
+                     .attr("transform", "translate("+(width+margin.right/5)+","+(0+margin.top/2)+")")
+                     .attr("d",d3.symbol().type(function (d){return q_text[d]}))
+                     .style("stroke",function(d){return q_color[d]})
+                     .style("fill","white");
+                
+    			legend.append("text")
+            		 .attr("x", (width+margin.right/5+10))
+            		 .attr("y", (0+margin.top/2))
+            		 .attr("dy", ".35em")
+           			 .style("text-anchor", "start")
+            		 .style("font-size","16px")
+            		 .text(function(d){return d});
+
+		    });
+		}   
+		</script>
+	</body>
+</html>

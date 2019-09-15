@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>lfan45</title>
+		<script type="text/javascript" src="d3/d3.v3.min.js"></script>
+		<style type="text/css">
+			.circle {
+				fill: none;
+				stroke-width: 1px;
+			}
+
+
+			.axis path,
+			.axis line {
+				fill: none;
+				stroke: black;
+				shape-rendering: crispEdges;
+			}
+			
+			.axis text {
+				font-family: sans-serif;
+				font-size: 11px;
+			}
+
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+
+			//Width and height
+			var w = 700;
+			var h = 429;
+			var padding = 40;
+
+			// get random integer inclusively
+			function getRandomIntInclusive(min, max) {
+  				min = Math.ceil(min);
+  				max = Math.floor(max);
+  				return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+			}
+			//a. generating random dataset containing 100 points between 10 and 250 inclusively
+			var dataset = [];					//Initialize empty array
+			var numDataPoints = 100;			//Number of dummy data points to create
+			var lowerBound = 10;	//lower bound
+			var upperBound = 250;	//upper bound
+			for (var i = 0; i < numDataPoints; i++) {					//Loop numDataPoints times
+				var newNumber1 = getRandomIntInclusive(lowerBound, upperBound);	//New random integer for x 
+				var newNumber2 = getRandomIntInclusive(lowerBound, upperBound);	//New random integer for y
+				dataset.push([newNumber1, newNumber2]);					//Add new number to array
+			}
+
+			//compute the average of all x coordinates
+			var sum_x = 0;
+			for(var i = 0; i < numDataPoints; i++){
+				sum_x += dataset[i][0];
+			}
+			var avg_x = sum_x / numDataPoints;
+
+			//compute the minimum of all y coordinates
+ 			var min_index = 0;
+ 			var min_y = 0;
+ 			for (var i = 1; i < numDataPoints; i++) {
+  				if (dataset[i][1] < dataset[min_index][1]) {
+  					min_index = i
+  					min_y = dataset[i][1];
+  					corr_x = dataset[i][0]
+ 				}
+			};
+			//Create scale functions
+			var lowerBound_scaled = 1;
+			var upperBound_scaled = 5;
+			var xScale = d3.scale.linear()
+								 .domain([0, d3.max(dataset, function(d) { return d[0]; })])
+								 .range([padding*2, w - padding*2]);
+
+			var yScale = d3.scale.linear()
+								 .domain([0, d3.max(dataset, function(d) { return d[1]; })])
+								 .range([h - padding, padding]);
+
+			var rScale = d3.scale.linear()
+								 .domain([lowerBound, upperBound])
+								 .range([lowerBound_scaled, upperBound_scaled]);
+
+			//Define X axis
+			var xAxis = d3.svg.axis()
+							  .scale(xScale)
+							  .orient("bottom")
+							  .ticks(10);
+
+			//Define Y axis
+			var yAxis = d3.svg.axis()
+							  .scale(yScale)
+							  .orient("left")
+							  .ticks(10);
+
+			//Create SVG element
+			var svg = d3.select("body")
+						.append("svg")
+						.attr("width", w)
+						.attr("height", h);
+
+			//c&d. Create circles
+			svg.selectAll("circle")
+			   .data(dataset)
+			   .enter()
+			   .append("circle")
+			   .attr("cx", function(d) {
+			   		return xScale(d[0]);
+			   })
+			   .attr("cy", function(d) {
+			   		return yScale(d[1]);
+			   })
+			   .attr("r", function(d) {
+			   		return Math.sqrt(Math.pow(rScale(d[0]),2)+Math.pow(rScale(d[1]),2));
+			   })
+			   .attr("class", "circle")
+			   .attr("stroke", function(d){
+			   		if (d[0] > avg_x) {return "blue";}
+			   		else {return "green"}
+			   	});
+
+			//b.Create X axis
+			svg.append("g")
+				.attr("class", "axis")
+				.attr("transform", "translate(0," + (h - padding) + ")")
+				.call(xAxis);
+			
+			//b.Create Y axis
+			svg.append("g")
+				.attr("class", "axis")
+				.attr("transform", "translate(" + 2*padding + ",0)")
+				.call(yAxis);
+
+			//e.Min Y label
+			svg.append("text")
+				.attr("x", (w/2))
+				.attr("y", 0+padding/2)
+				.attr("text-anchor","middle")
+			   	.style("font-size", "20px")
+			   	.style("text-decoration", "bold")
+			   	.text("lfan45");
+
+
+			//f.title 
+			svg.append("text")
+				.attr("x", xScale(corr_x)+0.75*padding)
+				.attr("y", yScale(min_y))
+				.attr("text-anchor","middle")
+			   	.style("font-size", "15px")
+			   	.style("fill","red")
+			   	.style("text-decoration", "bold")
+			   	.text("Y Min = " + min_y);
+		</script>
+	</body>
+</html>

@@ -1,0 +1,70 @@
+###############################################################################
+##                                                                           ##
+##  IMPORTANT NOTE: All accuracies must be reported with two decimal places  ##
+##  in the range of [0.00, 1.00], e.g. 0.78 and not 78, 78.00, 78%, etc.     ##
+##                                                                           ##
+###############################################################################
+
+**********************************************
+Q 3.1
+
+Linear Regression - Training Accuracy:0.64 
+Linear Regression - Testing Accuracy:0.64 
+
+Random Forest - Training Accuracy:1.00 
+Random Forest - Testing Accuracy:0.89  
+
+SVM - Training Accuracy:0.71 
+SVM - Testing Accuracy:0.71
+
+**********************************************
+
+Q 3.2 Hyperparameter Tuning
+
+Random Forest - n_estimators values tested (at least 3):9, 99, 199, 299, 399, 499
+Random Forest - max_depth values tested (at least 3):10, 50, 100, 150, 200  
+
+Random Forest - Best combination of parameter values - n_estimators:299 
+Random Forest - Best combination of parameter values - max_depth:100 
+
+Random Forest - Testing Accuracy before tuning (default parameters):0.89
+Random Forest - Testing Accuracy after tuning:0.93
+
+SVM - Kernel Values tested:linear, rbf 
+SVM - C values tested (at Least 3):0.001, 0.01, 0.1, 1, 10, 100 
+
+SVM - Best combination of parameter values - Kernel:rbf 
+SVM - Best combination of parameter values - C:100 
+
+SVM - Testing Accuracy before tuning (default parameters):0.71
+SVM - Testing Accuracy after tuning:0.82
+
+*********************************************
+
+Q 3.3
+
+SVM - Highest mean testing/cross-validated accuracy (best score):0.82 
+SVM - Mean train score:0.83 
+SVM Mean fit time:7.70220952 
+
+*********************************************
+
+Q 3.4 Feature Importance - WITH THE MODEL TRAINED IN Q 3.1
+
+Random Forest  - Most important feature (e.g. X5):X7 
+Random Forest  - Least important feature (e.g. X1):X9 
+
+*********************************************
+
+Q 3.5
+
+Best Classifier and why (in at most 50 words):Random Forest. Random Forest classifier has the highest test score among all the classifiers.
+
+*********************************************
+
+Q 3.6 Principal Component Analysis
+
+"PCA - Percentage of variance explained by each of the selected components (enter the entire array as [0.12, …, 0.012])": [5.05244700e-01, 3.76936309e-01, 1.17729460e-01, 4.59941145e-05, 1.92788922e-05, 1.12325809e-05, 6.78642894e-06, 1.88971137e-06, 1.54088292e-06, 8.24289754e-07]
+"PCA - Singular values corresponding to each of the selected components (enter the entire array as [0.09, …, 0.037])": [886690.55021511, 765870.22149031, 428019.7135883, 8460.03827621, 5477.2458465, 4180.81523164, 3249.68937137, 1714.82156063, 1548.48148676, 1132.55981354]
+
+*********************************************

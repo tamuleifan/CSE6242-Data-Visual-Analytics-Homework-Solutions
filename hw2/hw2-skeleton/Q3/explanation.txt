@@ -1,0 +1,4 @@
+Q3.a.2
+Feature 10 (Wins and nominations) and Feature 6 ( Rating) is better because movies with different ratings are separated better in its plot. Most of the blue cross dots are on the right, and the red ones are tend to be on the left. Dots with high wins+noms are almost all blue ones. Only a small portion of them are overlapped. 
+Q3.c
+We may use square root scale or log scale for y when the range of y values are large and a large portion of points have small y values. Using such scales, the plot could show the whole set of points without losing the details for points with small y values. 

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+  <style>
+    div.main {
+      margin: auto;
+      width: 1000px;
+    }
+    .main h1 {
+      text-align: center;
+    }
+    .counties {
+      fill: none;
+    }
+
+    .states {
+      fill: none;
+      stroke: #fff;
+      stroke-linejoin: round;
+    }
+    .mono {
+      font-size: 7pt;
+      font-family: Consolas, courier;
+      fill:black;
+    }
+
+  </style>
+  <script src="../lib/d3.v5.min.js"></script>
+  <script src="../lib/d3-scale-chromatic.v1.min.js"></script>
+  <script src="../lib/topojson.v2.min.js"></script>
+</head>
+<body>
+  <div class = 'main'>
+    <h1>Choropleth Map of County Data</h1>
+    <svg width="1200" height="600"></svg>
+  </div>
+  <script>
+
+    var legendSize = 22
+    
+    var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+    var state = d3.map(),
+    county = d3.map(),
+    poverty = d3.map(),
+    totalpop = d3.map(),
+    income = d3.map();
+
+
+    var path = d3.geoPath();
+
+    var promises = [
+    d3.json("us.json"),
+    d3.csv("county_poverty.csv", function(d) { 
+      d.id = d.CensusId
+      state.set(d.id, d.State); 
+      county.set(d.id, d.County); 
+      poverty.set(d.id, +d.Poverty); 
+    }),
+    d3.csv("county_detail.csv", function(d) { 
+      d.id = d.CensusId
+      totalpop.set(d.id, d.TotalPop); 
+      income.set(d.id, d.IncomePerCap); 
+    })
+    ]
+
+    Promise.all(promises).then(ready)
+
+    var y = d3.scaleLinear()
+    .domain([0, 20])
+    .rangeRound([10, 10+legendSize*9]);
+
+    var color = d3.scaleThreshold()
+    .domain([2,4,6,8,10,12,14,16,18])
+    .range(d3.schemeBlues[9]);
+
+    var legend_text = [2,4,6,8,10,12,14,16,18]
+
+    var g = svg.append("g")
+    .attr("class", "key")
+    .attr("transform", "translate(0,40)");
+
+
+    //legend
+    g.selectAll("rect")
+    .data(color.range().map(function(d) {
+      d = color.invertExtent(d);
+      if (d[0] == null) d[0] = y.domain()[0];
+      if (d[1] == null) d[1] = y.domain()[1];
+      return d;
+    }))
+    .enter().append("rect")
+    //.attr("rotate","-90")
+    .attr("x", 980)
+    .attr("y", function(d) { return y(d[0]); })
+    .attr("width", legendSize)
+    .attr("height", legendSize)
+    .style("stroke","#d9d9d9")
+    .style("fill", function(d) { return color(d[0]); });
+
+    g.append("text")
+    .attr("class", "mono")
+    .text("≤2%")
+    .attr("x", 1010)
+    .attr("y", 20);
+
+    g.append("text")
+    .attr("class", "mono")
+    .text("4%")
+    .attr("x", 1010)
+    .attr("y", 40);
+
+    g.append("text")
+    .attr("class", "mono")
+    .text("6%")
+    .attr("x", 1010)
+    .attr("y", 60);
+
+    g.append("text")
+    .attr("class", "mono")
+    .text("8%")
+    .attr("x", 1010)
+    .attr("y", 80);
+
+    g.append("text")
+    .attr("class", "mono")
+    .text("10%")
+    .attr("x", 1010)
+    .attr("y", 100);
+
+    g.append("text")
+    .attr("class", "mono")
+    .text("12%")
+    .attr("x", 1010)
+    .attr("y", 120);
+
+    g.append("text")
+    .attr("class", "mono")
+    .text("14%")
+    .attr("x", 1010)
+    .attr("y", 140);
+
+    g.append("text")
+    .attr("class", "mono")
+    .text("16%")
+    .attr("x", 1010)
+    .attr("y", 160);
+
+    g.append("text")
+    .attr("class", "mono")
+    .text("≥18%")
+    .attr("x", 1010)
+    .attr("y", 180);
+
+
+    g.append("text")
+    .attr("class", "caption")
+    .attr("y", 0)
+    .attr("x", 980)
+    .attr('dx',10)
+    .attr("fill", "#000")
+    .attr("text-anchor", "middle")
+    .attr("font-weight", "bold")
+    .attr("font-size", "12px")
+    .text("Poverty Rate");
+
+
+
+    //map
+    function ready([us]) {
+      svg.append("g")
+      .attr("class", "counties")
+      .selectAll("path")
+      .data(topojson.feature(us, us.objects.counties).features)
+      .enter().append("path")
+      .attr("fill", function(d) { return color(d.Poverty = poverty.get(d.id)); })
+      .attr("d", path)
+      .append("title")
+      .text(function(d) { return d.Poverty + "%"; });
+
+      svg.append("path")
+      .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+      .attr("class", "states")
+      .attr("d", path);
+    }
+
+  </script>
+</body>

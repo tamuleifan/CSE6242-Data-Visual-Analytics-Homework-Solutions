@@ -1,0 +1,32 @@
+div.main {
+  margin: auto;
+  width: 1000px;
+}
+.main h1 {
+  text-align: center;
+}
+.bar rect {
+ fill: #4eb3d3;
+}
+.bar text {
+ fill: white;
+ font-size: 18px;
+ text-anchor: start;
+}
+.axis path {
+ display: none;
+}
+.axis line {
+ fill: none;
+ stroke: #000;
+ shape-rendering: crispEdges;
+}
+.axis text {
+ font-size: 18px;
+}
+.axis2 path,
+.axis2 line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}

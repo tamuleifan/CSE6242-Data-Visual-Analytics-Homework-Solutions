@@ -1,0 +1,8 @@
+1. Average node degree = 1.679
+The degree of a node is the number of edges connected to it. Average node degree is the average of the degree of all nodes.
+
+2. Diameter of the graph = 11
+the diameter of a network as the longest of all the calculated shortest paths in a network.
+
+3. Average path length = 3.439
+The average shortest path length is calculated by finding the shortest path between all pairs of nodes, and taking the average over all paths of the length.

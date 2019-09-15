@@ -1,0 +1,31 @@
+1.Ease to develop for developers
+R: R is a statisical language, and there are a lot of R packages that make visualization very easy with much less code than starting from scratch. Some plots can be created by even one line command. Visualization is only part of what R could do, and visualization could be easy to be developed along with manipulating data and train learners in the Rstudio.
+
+D3: D3 is a Javascript library for interactive visulization. Visulizaiton based on D3 needs a broad knowledge of front end programming. The learning curve is much more steep than R. Even though a lot of code scripts could be found online, Visulizaiton using D3 is still labor intensive.
+
+
+2.Ease to maintain the visualization for developers
+R: I tend to use Rstudio to create R plots. If the data were changed, I would have to load the data into Rstudio and run all the codes again for new plots.
+
+D3: D3 is actually data-driven. IF there were a change in the data source, the only thing needs to do would be updating the link of data source and refreshing the browers. 
+
+
+3.Usability of visualizaiton developed for end users
+R: What R can output are non-interactive and static graphs. It is easy and quick for satisfying demand of end users. But it cannot output custermized visulization as well as d3. There are packages that can export graphics to JavaScript, but the results still feel a bit canned.
+
+D3: D3 can output various interactive grahpics based on the taste of end users. It could be either animated or static, and could be changed along with interacting with end users.
+
+
+4.Scalability of visualization to “large” datasets
+R:R works well with large datasets, but its scalability may not be as good as what D3 can do.
+
+D3:the data is basically visualized in the svg. Svg stands for scalable vector graphics. It was born with scalability to large datasets.
+
+
+5.System requirements to run the visualization (e.g., browsers, OS, software licensing) for end users
+R:R need to specific IDE for editing and outputing visualization such as Rstudio and Vim-R. The graphics that are presented to end users are basically in the format of images. The end users may need the specific IDE to check the graphs if scripts are given.
+
+D3:D3 is a javascript library which widely supported by various browers. What the end users need to access the visualization is just browers.
+
+
+

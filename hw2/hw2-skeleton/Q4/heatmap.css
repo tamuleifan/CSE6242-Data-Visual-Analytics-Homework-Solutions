@@ -1,0 +1,22 @@
+.axis path,
+.axis line {
+  fill: none;
+  stroke: white;
+  shape-rendering: crispEdges;
+}
+.cell {
+  stroke:#d9d9d9;
+  stroke-width:2px;   
+}
+.mono {
+  font-size: 9pt;
+  font-family: Consolas, courier;
+  font-weight:bold;
+  fill:black;
+}
+
+.axis text {
+  font-family: Consolas;
+  font-size: 14px;
+}
+

@@ -1,0 +1,4 @@
+node size: betweenness centrality
+node color: modularity class
+node color saturation:its degree
+layout: Openord->Focus Atlas->Noverlaop
